@@ -9,13 +9,16 @@ The ETL batch pipeline:
 import os
 import csv
 import config
-from etl.db import db_connection, db_execute
+from etl.db import Db
 
 
 def run_pipeline():
     """
     Runs all components of the ETL pipeline in the correct order
     """
+
+    # Connect to database
+    Db.connect()
 
     # Create tables
     create_tables()
@@ -27,12 +30,15 @@ def run_pipeline():
     calculate_and_write_kpi1()
     calculate_and_write_kpi2()
 
+    # Disconnect from database
+    Db.disconnect()
+
 
 def create_tables():
     """
     Drops and creates all tables
     """
-    with db_connection().cursor() as cursor:
+    with Db.conn().cursor() as cursor:
         # Drop tables
         sql = "DROP TABLE IF EXISTS raw_data"
         cursor.execute(sql)
@@ -80,7 +86,7 @@ def create_tables():
         cursor.execute(sql)
 
         # Connection is not autocommit by default. So we must commit manually.
-        # db_connection().commit()
+        # Db.conn().commit()
 
 
 def read_csv(folder_path):
@@ -93,7 +99,7 @@ def read_csv(folder_path):
         The filesystem path of the csv files
 
     """
-    with db_connection().cursor() as cursor:
+    with Db.conn().cursor() as cursor:
         for root, dirs, files in os.walk(folder_path):
             for file in files:
                 f = open(os.path.join(folder_path, file), 'r')
@@ -105,7 +111,7 @@ def read_csv(folder_path):
                         row
                     )
                 f.close()
-                db_connection().commit()
+                Db.conn().commit()
 
 
 def calculate_and_write_kpi1():
@@ -155,7 +161,7 @@ def calculate_and_write_kpi1():
         WHERE rank <= 3
       ) as fnl
     """
-    db_execute(sql)
+    Db.execute(sql)
 
     # 5 minute intervals
     sql = """
@@ -195,7 +201,7 @@ def calculate_and_write_kpi1():
         WHERE rank <= 3
       ) as fnl
     """
-    db_execute(sql)
+    Db.execute(sql)
 
 
 def calculate_and_write_kpi2():
@@ -244,7 +250,7 @@ def calculate_and_write_kpi2():
         WHERE rank <= 3
       ) as fnl
     """
-    db_execute(sql)
+    Db.execute(sql)
 
     # 5 minute intervals
     sql = """
@@ -284,4 +290,4 @@ def calculate_and_write_kpi2():
         WHERE rank <= 3
       ) as fnl
     """
-    db_execute(sql)
+    Db.execute(sql)

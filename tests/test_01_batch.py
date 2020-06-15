@@ -1,6 +1,6 @@
 import pymysql
 from etl.batch import run_pipeline
-from etl.db import db_connection
+from etl.db import Db
 import config
 
 expected_data_kpi1 = [
@@ -62,7 +62,7 @@ def test_all():
 
     run_pipeline()
 
-    with db_connection().cursor() as cursor:
+    with Db.conn().cursor() as cursor:
 
         # Check raw_data table
         sql = "SELECT count(*) as cnt FROM raw_data"
@@ -81,3 +81,5 @@ def test_all():
         cursor.execute(sql)
         actual_data_kpi2 = cursor.fetchall()
         assert same_lists(expected_data_kpi2, actual_data_kpi2)
+
+    Db.disconnect()

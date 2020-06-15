@@ -34,5 +34,3 @@ KPI2_COLUMNS = [
     "number_of_unique_users",
     "interval"
 ]
-
-DB_CONNECTION = None

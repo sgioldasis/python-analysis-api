@@ -2,20 +2,36 @@ import pymysql
 import config
 
 
-def db_connection():
-    # Connect to the database
-    if not config.DB_CONNECTION:
-        config.DB_CONNECTION = pymysql.connect(
+class Db(object):
+
+    connection = None
+
+    @classmethod
+    def connect(cls):
+        cls.connection = pymysql.connect(
             host=config.HOST,
             user=config.USER,
             password=config.PASSWORD,
             db=config.DATABASE,
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor)
-    return config.DB_CONNECTION
 
+    @classmethod
+    def conn(cls):
+        # Connect to the database
+        if not cls.connection:
+            cls.connect()
+        return cls.connection
 
-def db_execute(sql):
-    with db_connection().cursor() as cursor:
-        cursor.execute(sql)
-        db_connection().commit()
+    @classmethod
+    def execute(cls, sql):
+        with cls.connection.cursor() as cursor:
+            cursor.execute(sql)
+            cls.connection.commit()
+
+    @classmethod
+    def disconnect(cls):
+        # Disconnect from the database
+        if cls.connection and cls.connection.open:
+            cls.connection.close()
+            cls.connection = None

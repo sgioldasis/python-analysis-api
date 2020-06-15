@@ -28,7 +28,7 @@ test-dep:
 	@export FLASK_ENV=development; pytest 
 
 sleep:
-	@echo "\n${BLUE}Sleeping for 20 seconds...${NC}\n"
+	@echo "\n${BLUE}Waiting for infrastructure to become available...${NC}\n"
 	@sleep 20
 
 test: infra-up sleep test-dep infra-down
