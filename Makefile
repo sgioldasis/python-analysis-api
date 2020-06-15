@@ -25,7 +25,7 @@ run-api:
 	@flask run
 
 test-dep:
-	@export FLASK_ENV=development; pytest 
+	@export FLASK_ENV=development; pytest  --cov=etl --cov=app --cov-report=term --cov-report=html
 
 sleep:
 	@echo "\n${BLUE}Waiting for infrastructure to become available...${NC}\n"
