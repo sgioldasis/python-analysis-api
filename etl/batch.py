@@ -38,55 +38,37 @@ def create_tables():
     """
     Drops and creates all tables
     """
-    with Db.conn().cursor() as cursor:
-        # Drop tables
-        sql = "DROP TABLE IF EXISTS raw_data"
-        cursor.execute(sql)
-
-        sql = "DROP TABLE IF EXISTS kpi1"
-        cursor.execute(sql)
-
-        sql = "DROP TABLE IF EXISTS kpi2"
-        cursor.execute(sql)
-
-        # Create tables
-        sql = """
-          CREATE TABLE raw_data (
-              interval_start_timestamp BIGINT NOT NULL,
-              interval_end_timestamp BIGINT NOT NULL,
-              msisdn BIGINT NOT NULL,
-              bytes_uplink BIGINT NOT NULL,
-              bytes_downlink BIGINT NOT NULL,
-              service_id INT UNSIGNED NOT NULL,
-              cell_id BIGINT NOT NULL
-          );
-        """
-        cursor.execute(sql)
-
-        sql = """
-          CREATE TABLE kpi1 (
+    sql = """
+        DROP TABLE IF EXISTS raw_data;
+        CREATE TABLE raw_data (
             interval_start_timestamp BIGINT NOT NULL,
             interval_end_timestamp BIGINT NOT NULL,
-            service_id int(10) UNSIGNED NOT NULL,
-            total_bytes BIGINT NOT NULL,
-            `interval` VARCHAR(20) NOT NULL
-          );
-        """
-        cursor.execute(sql)
+            msisdn BIGINT NOT NULL,
+            bytes_uplink BIGINT NOT NULL,
+            bytes_downlink BIGINT NOT NULL,
+            service_id INT UNSIGNED NOT NULL,
+            cell_id BIGINT NOT NULL
+        );
 
-        sql = """
-          CREATE TABLE kpi2 (
-            interval_start_timestamp BIGINT NOT NULL,
-            interval_end_timestamp BIGINT NOT NULL,
-            cell_id BIGINT NOT NULL,
-            number_of_unique_users BIGINT NOT NULL,
-            `interval` VARCHAR(20) NOT NULL
-          );
-        """
-        cursor.execute(sql)
+        DROP TABLE IF EXISTS kpi1;
+        CREATE TABLE kpi1 (
+        interval_start_timestamp BIGINT NOT NULL,
+        interval_end_timestamp BIGINT NOT NULL,
+        service_id int(10) UNSIGNED NOT NULL,
+        total_bytes BIGINT NOT NULL,
+        `interval` VARCHAR(20) NOT NULL
+        );
 
-        # Connection is not autocommit by default. So we must commit manually.
-        # Db.conn().commit()
+        DROP TABLE IF EXISTS kpi2;
+        CREATE TABLE kpi2 (
+        interval_start_timestamp BIGINT NOT NULL,
+        interval_end_timestamp BIGINT NOT NULL,
+        cell_id BIGINT NOT NULL,
+        number_of_unique_users BIGINT NOT NULL,
+        `interval` VARCHAR(20) NOT NULL
+        );          
+    """
+    Db.execute(sql)
 
 
 def read_csv(folder_path):
