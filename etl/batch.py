@@ -27,8 +27,10 @@ def run_pipeline():
     read_csv(config.INPUT_PATH)
 
     # Calculate KPIs and insert results into corresponding database tables
-    calculate_and_write_kpi1()
-    calculate_and_write_kpi2()
+    calculate_and_write_kpi1(period='1h', tag='1-hour')
+    calculate_and_write_kpi1(period='5m', tag='5-minute')
+    calculate_and_write_kpi2(period='1h', tag='1-hour')
+    calculate_and_write_kpi2(period='5m', tag='5-minute')
 
     # Disconnect from database
     Db.disconnect()
@@ -116,7 +118,7 @@ def read_csv(folder_path):
                 Db.conn().commit()
 
 
-def calculate_and_write_kpi1():
+def calculate_and_write_kpi1(period, tag):
     """
     Calculates KPI1: Top 3 services by traffic volume
 
@@ -126,7 +128,7 @@ def calculate_and_write_kpi1():
     """
 
     # Define sql
-    sql = """
+    sql = f"""
       INSERT INTO kpi1
       SELECT * FROM 
       (
@@ -166,11 +168,10 @@ def calculate_and_write_kpi1():
     """
 
     # Execute sql (formatted with the desired parameters)
-    Db.execute(sql.format(period='1h', tag='1-hour'))
-    Db.execute(sql.format(period='5m', tag='5-minute'))
+    Db.execute(sql)
 
 
-def calculate_and_write_kpi2():
+def calculate_and_write_kpi2(period, tag):
     """
     Calculates KPI2: Top 3 cells by number of unique users
 
@@ -179,7 +180,7 @@ def calculate_and_write_kpi2():
     """
 
     # Define sql
-    sql = """
+    sql = f"""
       INSERT INTO kpi2
       SELECT * FROM 
       (
@@ -219,5 +220,4 @@ def calculate_and_write_kpi2():
     """
 
     # Execute sql (formatted with the desired parameters)
-    Db.execute(sql.format(period='1h', tag='1-hour'))
-    Db.execute(sql.format(period='5m', tag='5-minute'))
+    Db.execute(sql)
