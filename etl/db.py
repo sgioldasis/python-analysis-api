@@ -4,7 +4,6 @@ This module provides the database functionality.
 
 import pymysql
 import config
-from pymysql.constants import CLIENT
 
 
 class Db(object):
@@ -24,7 +23,7 @@ class Db(object):
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor,
             local_infile=True,
-            client_flag=CLIENT.MULTI_STATEMENTS
+            client_flag=pymysql.constants.CLIENT.MULTI_STATEMENTS
         )
 
     @classmethod
