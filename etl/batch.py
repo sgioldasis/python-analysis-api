@@ -167,7 +167,7 @@ def calculate_and_write_kpi1(period, tag):
       ) as output
     """
 
-    # Execute sql (formatted with the desired parameters)
+    # Execute sql
     Db.execute(sql)
 
 
@@ -219,5 +219,5 @@ def calculate_and_write_kpi2(period, tag):
       ) as output
     """
 
-    # Execute sql (formatted with the desired parameters)
+    # Execute sql
     Db.execute(sql)
