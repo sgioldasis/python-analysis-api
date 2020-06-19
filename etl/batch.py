@@ -67,6 +67,18 @@ def create_tables():
         number_of_unique_users BIGINT NOT NULL,
         `interval` VARCHAR(20) NOT NULL
         );          
+
+        CREATE OR REPLACE VIEW trn AS
+        SELECT 
+        FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
+        FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
+        DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00') as start_1h,
+        DATE_ADD(DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00'), INTERVAL 1 HOUR) as end_1h,
+        msisdn ,
+        bytes_uplink + bytes_downlink as total_bytes,
+        service_id ,
+        cell_id 
+        FROM raw_data        
     """
     Db.execute(sql)
 
@@ -110,18 +122,7 @@ def calculate_and_write_kpi1():
       INSERT INTO kpi1
       SELECT * FROM 
       (
-        WITH trn AS (
-        SELECT 
-        FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
-        FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
-        DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00') as start_1h,
-        DATE_ADD(DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00'), INTERVAL 1 HOUR) as end_1h,
-        msisdn ,
-        bytes_uplink + bytes_downlink as total_bytes,
-        service_id ,
-        cell_id 
-        FROM raw_data
-        ),
+        WITH
         grp AS (
         SELECT start_1h, end_1h, service_id, sum(total_bytes) as total_bytes 
         FROM trn
@@ -150,18 +151,7 @@ def calculate_and_write_kpi1():
       INSERT INTO kpi1 
       SELECT * FROM 
       (
-        WITH trn AS (
-        SELECT 
-        FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
-        FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
-        DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00') as start_1h,
-        DATE_ADD(DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00'), INTERVAL 1 HOUR) as end_1h,
-        msisdn ,
-        bytes_uplink + bytes_downlink as total_bytes,
-        service_id ,
-        cell_id 
-        FROM raw_data
-        ),
+        WITH 
         grp AS (
         SELECT start_5m, end_5m, service_id, sum(total_bytes) as total_bytes 
         FROM trn
@@ -199,18 +189,7 @@ def calculate_and_write_kpi2():
       INSERT INTO kpi2
       SELECT * FROM 
       (
-        WITH trn AS (
-        SELECT 
-        FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
-        FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
-        DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00') as start_1h,
-        DATE_ADD(DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00'), INTERVAL 1 HOUR) as end_1h,
-        msisdn ,
-        bytes_uplink + bytes_downlink as total_bytes,
-        service_id ,
-        cell_id 
-        FROM raw_data
-        ),
+        WITH
         grp AS (
         SELECT start_1h, end_1h, cell_id, count(DISTINCT msisdn) as number_of_unique_users 
         FROM trn
@@ -239,18 +218,7 @@ def calculate_and_write_kpi2():
       INSERT INTO kpi2
       SELECT * FROM 
       (
-        WITH trn AS (
-        SELECT 
-        FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
-        FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
-        DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00') as start_1h,
-        DATE_ADD(DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00'), INTERVAL 1 HOUR) as end_1h,
-        msisdn ,
-        bytes_uplink + bytes_downlink as total_bytes,
-        service_id ,
-        cell_id 
-        FROM raw_data
-        ),
+        WITH 
         grp AS (
         SELECT start_5m, end_5m, cell_id, count(DISTINCT msisdn) as number_of_unique_users 
         FROM trn
