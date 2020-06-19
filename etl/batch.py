@@ -116,63 +116,36 @@ def calculate_and_write_kpi1():
     interval
     """
 
-    # 1 hour intervals
+    # Define sql
     sql = """
-      -- KPI1 (1 hour) 
       INSERT INTO kpi1
       SELECT * FROM 
       (
         WITH
         grp AS (
-        SELECT start_1h, end_1h, service_id, sum(total_bytes) as total_bytes 
+        SELECT start_{period}, end_{period}, service_id, sum(total_bytes) as total_bytes 
         FROM trn
-        GROUP BY start_1h, end_1h, service_id 
+        GROUP BY start_{period}, end_{period}, service_id 
         ),
         rnk AS (
         SELECT *,
-        DENSE_RANK() OVER(PARTITION BY start_1h, end_1h ORDER BY total_bytes DESC, service_id DESC) as rank
+        DENSE_RANK() OVER(PARTITION BY start_{period}, end_{period} ORDER BY total_bytes DESC, service_id DESC) as rank
         FROM grp
         ) 
         SELECT
-        cast(UNIX_TIMESTAMP(start_1h)*1000 as INT) as interval_start_timestamp,
-        cast(UNIX_TIMESTAMP(end_1h)*1000 as INT) as interval_end_timestamp,
+        cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) as interval_start_timestamp,
+        cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) as interval_end_timestamp,
         service_id ,
         total_bytes ,
-        '1-hour' as `interval`
+        '{tag}' as `interval`
         FROM rnk
         WHERE rank <= 3
       ) as fnl
     """
-    Db.execute(sql)
 
-    # 5 minute intervals
-    sql = """
-      -- KPI1 (5 minute) 
-      INSERT INTO kpi1 
-      SELECT * FROM 
-      (
-        WITH 
-        grp AS (
-        SELECT start_5m, end_5m, service_id, sum(total_bytes) as total_bytes 
-        FROM trn
-        GROUP BY start_5m, end_5m, service_id 
-        ),
-        rnk AS (
-        SELECT *,
-        DENSE_RANK() OVER(PARTITION BY start_5m, end_5m ORDER BY total_bytes DESC, service_id DESC) as rank
-        FROM grp
-        )
-        SELECT
-        cast(UNIX_TIMESTAMP(start_5m)*1000 as INT) as interval_start_timestamp,
-        cast(UNIX_TIMESTAMP(end_5m)*1000 as INT) as interval_end_timestamp,
-        service_id ,
-        total_bytes ,
-        '5-minute' as `interval`
-        FROM rnk
-        WHERE rank <= 3
-      ) as fnl
-    """
-    Db.execute(sql)
+    # Execute sql (formatted with the desired parameters)
+    Db.execute(sql.format(period='1h', tag='1-hour'))
+    Db.execute(sql.format(period='5m', tag='5-minute'))
 
 
 def calculate_and_write_kpi2():
@@ -183,60 +156,33 @@ def calculate_and_write_kpi2():
     of unique users (as identified by msisdn) for the interval
     """
 
-    # 1 hour intervals
+    # Define sql
     sql = """
-      -- KPI2 (1 hour) 
-      INSERT INTO kpi2
-      SELECT * FROM 
-      (
-        WITH
-        grp AS (
-        SELECT start_1h, end_1h, cell_id, count(DISTINCT msisdn) as number_of_unique_users 
-        FROM trn
-        GROUP BY start_1h, end_1h, cell_id 
-        ),
-        rnk AS (
-        SELECT *,
-        DENSE_RANK() OVER(PARTITION BY start_1h, end_1h ORDER BY number_of_unique_users DESC, cell_id DESC) as rank
-        FROM grp
-        ) 
-        SELECT
-        cast(UNIX_TIMESTAMP(start_1h)*1000 as INT) as interval_start_timestamp,
-        cast(UNIX_TIMESTAMP(end_1h)*1000 as INT) as interval_end_timestamp,
-        cell_id ,
-        number_of_unique_users ,
-        '1-hour' as `interval`
-        FROM rnk
-        WHERE rank <= 3
-      ) as fnl
-    """
-    Db.execute(sql)
-
-    # 5 minute intervals
-    sql = """
-      -- KPI2 (5 minute) 
       INSERT INTO kpi2
       SELECT * FROM 
       (
         WITH 
         grp AS (
-        SELECT start_5m, end_5m, cell_id, count(DISTINCT msisdn) as number_of_unique_users 
+        SELECT start_{period}, end_{period}, cell_id, count(DISTINCT msisdn) as number_of_unique_users 
         FROM trn
-        GROUP BY start_5m, end_5m, cell_id 
+        GROUP BY start_{period}, end_{period}, cell_id 
         ),
         rnk AS (
         SELECT *,
-        DENSE_RANK() OVER(PARTITION BY start_5m, end_5m ORDER BY number_of_unique_users DESC, cell_id DESC) as rank
+        DENSE_RANK() OVER(PARTITION BY start_{period}, end_{period} ORDER BY number_of_unique_users DESC, cell_id DESC) as rank
         FROM grp
         ) 
         SELECT
-        cast(UNIX_TIMESTAMP(start_5m)*1000 as INT) as interval_start_timestamp,
-        cast(UNIX_TIMESTAMP(end_5m)*1000 as INT) as interval_end_timestamp,
+        cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) as interval_start_timestamp,
+        cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) as interval_end_timestamp,
         cell_id ,
         number_of_unique_users ,
-        '5-minute' as `interval`
+        '{tag}' as `interval`
         FROM rnk
         WHERE rank <= 3
       ) as fnl
     """
-    Db.execute(sql)
+
+    # Execute sql (formatted with the desired parameters)
+    Db.execute(sql.format(period='1h', tag='1-hour'))
+    Db.execute(sql.format(period='5m', tag='5-minute'))
