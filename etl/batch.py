@@ -68,7 +68,7 @@ def create_tables():
             `interval` VARCHAR(20) NOT NULL
         );          
 
-        CREATE OR REPLACE VIEW trn AS
+        CREATE OR REPLACE VIEW trn_raw_data AS
         SELECT 
             FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
             FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
@@ -137,7 +137,7 @@ def calculate_and_write_kpi1():
                 end_{period}, 
                 service_id, 
                 sum(total_bytes) as total_bytes 
-            FROM trn
+            FROM trn_raw_data
             GROUP BY 
                 start_{period}, 
                 end_{period}, 
@@ -190,7 +190,7 @@ def calculate_and_write_kpi2():
                 end_{period}, 
                 cell_id, 
                 count(DISTINCT msisdn) as number_of_unique_users 
-            FROM trn
+            FROM trn_raw_data
             GROUP BY 
                 start_{period}, 
                 end_{period}, 
