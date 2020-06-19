@@ -21,7 +21,9 @@ class Db(object):
             password=config.PASSWORD,
             db=config.DATABASE,
             charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor)
+            cursorclass=pymysql.cursors.DictCursor,
+            local_infile=True
+        )
 
     @classmethod
     def conn(cls):

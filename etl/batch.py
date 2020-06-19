@@ -102,15 +102,14 @@ def read_csv(folder_path):
     with Db.conn().cursor() as cursor:
         for root, dirs, files in os.walk(folder_path):
             for file in files:
-                f = open(os.path.join(folder_path, file), 'r')
-                reader = csv.reader(f)
-                next(reader)  # Skip the header row.
-                for row in reader:
-                    cursor.execute(
-                        "INSERT INTO raw_data VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                        row
-                    )
-                f.close()
+                path = os.path.join(folder_path, file)
+                query = f"""
+                    LOAD DATA LOCAL INFILE '{path}' 
+                    INTO TABLE raw_data 
+                    FIELDS TERMINATED BY ','
+                    IGNORE 1 LINES
+                """
+                cursor.execute(query)
                 Db.conn().commit()
 
 
