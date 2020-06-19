@@ -162,7 +162,7 @@ def calculate_and_write_kpi1():
             '{tag}' as `interval`
         FROM rnk
         WHERE rank <= 3
-      ) as fnl
+      ) as final
     """
 
     # Execute sql (formatted with the desired parameters)
@@ -215,7 +215,7 @@ def calculate_and_write_kpi2():
             '{tag}' as `interval`
         FROM rnk
         WHERE rank <= 3
-      ) as fnl
+      ) as final
     """
 
     # Execute sql (formatted with the desired parameters)
