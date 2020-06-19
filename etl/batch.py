@@ -72,9 +72,15 @@ def create_tables():
         SELECT 
             FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
             FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
-            DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00') as start_1h,
+            DATE_FORMAT(
+                FROM_UNIXTIME(interval_start_timestamp / 1000), 
+                '%Y-%m-%d %H:00:00'
+            ) as start_1h,
             DATE_ADD(
-                DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00'), 
+                DATE_FORMAT(
+                    FROM_UNIXTIME(interval_start_timestamp / 1000), 
+                    '%Y-%m-%d %H:00:00'
+                ), 
                 INTERVAL 1 HOUR
             ) as end_1h,
             msisdn ,
@@ -147,8 +153,10 @@ def calculate_and_write_kpi1():
             FROM grp
         ) 
         SELECT
-            cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) as interval_start_timestamp,
-            cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) as interval_end_timestamp,
+            cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) 
+                as interval_start_timestamp,
+            cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) 
+                as interval_end_timestamp,
             service_id ,
             total_bytes ,
             '{tag}' as `interval`
@@ -198,8 +206,10 @@ def calculate_and_write_kpi2():
             FROM grp
         ) 
         SELECT
-            cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) as interval_start_timestamp,
-            cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) as interval_end_timestamp,
+            cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) 
+                as interval_start_timestamp,
+            cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) 
+                as interval_end_timestamp,
             cell_id ,
             number_of_unique_users ,
             '{tag}' as `interval`
