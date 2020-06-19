@@ -123,21 +123,32 @@ def calculate_and_write_kpi1():
       (
         WITH
         grp AS (
-        SELECT start_{period}, end_{period}, service_id, sum(total_bytes) as total_bytes 
-        FROM trn
-        GROUP BY start_{period}, end_{period}, service_id 
+            SELECT 
+                start_{period}, 
+                end_{period}, 
+                service_id, 
+                sum(total_bytes) as total_bytes 
+            FROM trn
+            GROUP BY 
+                start_{period}, 
+                end_{period}, 
+                service_id 
         ),
         rnk AS (
-        SELECT *,
-        DENSE_RANK() OVER(PARTITION BY start_{period}, end_{period} ORDER BY total_bytes DESC, service_id DESC) as rank
-        FROM grp
+            SELECT 
+                *,
+                DENSE_RANK() OVER (
+                    PARTITION BY start_{period}, end_{period} 
+                    ORDER BY total_bytes DESC, service_id DESC
+                ) as rank
+            FROM grp
         ) 
         SELECT
-        cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) as interval_start_timestamp,
-        cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) as interval_end_timestamp,
-        service_id ,
-        total_bytes ,
-        '{tag}' as `interval`
+            cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) as interval_start_timestamp,
+            cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) as interval_end_timestamp,
+            service_id ,
+            total_bytes ,
+            '{tag}' as `interval`
         FROM rnk
         WHERE rank <= 3
       ) as fnl
@@ -163,21 +174,32 @@ def calculate_and_write_kpi2():
       (
         WITH 
         grp AS (
-        SELECT start_{period}, end_{period}, cell_id, count(DISTINCT msisdn) as number_of_unique_users 
-        FROM trn
-        GROUP BY start_{period}, end_{period}, cell_id 
+            SELECT 
+                start_{period}, 
+                end_{period}, 
+                cell_id, 
+                count(DISTINCT msisdn) as number_of_unique_users 
+            FROM trn
+            GROUP BY 
+                start_{period}, 
+                end_{period}, 
+                cell_id 
         ),
         rnk AS (
-        SELECT *,
-        DENSE_RANK() OVER(PARTITION BY start_{period}, end_{period} ORDER BY number_of_unique_users DESC, cell_id DESC) as rank
-        FROM grp
+            SELECT 
+                *,
+                DENSE_RANK() OVER (
+                    PARTITION BY start_{period}, end_{period} 
+                    ORDER BY number_of_unique_users DESC, cell_id DESC
+                ) as rank
+            FROM grp
         ) 
         SELECT
-        cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) as interval_start_timestamp,
-        cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) as interval_end_timestamp,
-        cell_id ,
-        number_of_unique_users ,
-        '{tag}' as `interval`
+            cast(UNIX_TIMESTAMP(start_{period})*1000 as INT) as interval_start_timestamp,
+            cast(UNIX_TIMESTAMP(end_{period})*1000 as INT) as interval_end_timestamp,
+            cell_id ,
+            number_of_unique_users ,
+            '{tag}' as `interval`
         FROM rnk
         WHERE rank <= 3
       ) as fnl
