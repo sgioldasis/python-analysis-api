@@ -52,32 +52,35 @@ def create_tables():
 
         DROP TABLE IF EXISTS kpi1;
         CREATE TABLE kpi1 (
-        interval_start_timestamp BIGINT NOT NULL,
-        interval_end_timestamp BIGINT NOT NULL,
-        service_id int(10) UNSIGNED NOT NULL,
-        total_bytes BIGINT NOT NULL,
-        `interval` VARCHAR(20) NOT NULL
+            interval_start_timestamp BIGINT NOT NULL,
+            interval_end_timestamp BIGINT NOT NULL,
+            service_id int(10) UNSIGNED NOT NULL,
+            total_bytes BIGINT NOT NULL,
+            `interval` VARCHAR(20) NOT NULL
         );
 
         DROP TABLE IF EXISTS kpi2;
         CREATE TABLE kpi2 (
-        interval_start_timestamp BIGINT NOT NULL,
-        interval_end_timestamp BIGINT NOT NULL,
-        cell_id BIGINT NOT NULL,
-        number_of_unique_users BIGINT NOT NULL,
-        `interval` VARCHAR(20) NOT NULL
+            interval_start_timestamp BIGINT NOT NULL,
+            interval_end_timestamp BIGINT NOT NULL,
+            cell_id BIGINT NOT NULL,
+            number_of_unique_users BIGINT NOT NULL,
+            `interval` VARCHAR(20) NOT NULL
         );          
 
         CREATE OR REPLACE VIEW trn AS
         SELECT 
-        FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
-        FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
-        DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00') as start_1h,
-        DATE_ADD(DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00'), INTERVAL 1 HOUR) as end_1h,
-        msisdn ,
-        bytes_uplink + bytes_downlink as total_bytes,
-        service_id ,
-        cell_id 
+            FROM_UNIXTIME(interval_start_timestamp / 1000) as start_5m,
+            FROM_UNIXTIME(interval_end_timestamp / 1000) as end_5m,
+            DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00') as start_1h,
+            DATE_ADD(
+                DATE_FORMAT(FROM_UNIXTIME(interval_start_timestamp / 1000), '%Y-%m-%d %H:00:00'), 
+                INTERVAL 1 HOUR
+            ) as end_1h,
+            msisdn ,
+            bytes_uplink + bytes_downlink as total_bytes,
+            service_id ,
+            cell_id 
         FROM raw_data        
     """
     Db.execute(sql)
