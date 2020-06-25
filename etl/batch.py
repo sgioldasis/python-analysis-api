@@ -7,7 +7,7 @@ The ETL batch pipeline:
 """
 
 import os
-import csv
+
 import config
 from etl.db import Db
 

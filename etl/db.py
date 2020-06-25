@@ -3,6 +3,7 @@ This module provides the database functionality.
 """
 
 import pymysql
+
 import config
 
 

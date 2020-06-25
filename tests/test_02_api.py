@@ -1,6 +1,7 @@
 # test_hello_add.py
+from flask import json
+
 import app
-from flask import Flask, json
 
 
 def test_kpi1_all():

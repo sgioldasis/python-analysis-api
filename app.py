@@ -2,12 +2,14 @@
 This module provides the API functionality
 """
 
-from flask import Flask
-from flask_mysqldb import MySQL
 import json
-from datetime import datetime
-from flask import request
 import time
+from datetime import datetime
+
+from flask import Flask
+from flask import request
+from flask_mysqldb import MySQL
+
 import config
 
 # App Configuration

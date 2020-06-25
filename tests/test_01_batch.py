@@ -1,7 +1,5 @@
-import pymysql
 from etl.batch import run_pipeline
 from etl.db import Db
-import config
 
 expected_data_kpi1 = [
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488358800000,
