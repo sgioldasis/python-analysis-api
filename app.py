@@ -95,6 +95,28 @@ def db_results(sql):
     return output_rows
 
 
+def db_get(kpi_table, order_by):
+    """
+    Queries appropriate database table and returns results
+    """
+
+    # Construct the SQL statement to run on the database
+    sql = f'''
+      SELECT * 
+      FROM {kpi_table} 
+      {sql_condition()}
+      ORDER BY 
+        `interval`,
+        interval_start_timestamp, 
+        interval_end_timestamp, 
+        {order_by}
+    '''
+    print("sql", sql)
+
+    # Run the SQL statement on the database and return results
+    return db_results(sql)
+
+
 @name_space.route('/kpi1/')
 @name_space.doc(params=PARAMS)
 class Kpi1Class(Resource):
@@ -103,23 +125,7 @@ class Kpi1Class(Resource):
         """
         Queries kpi1 database table and returns results in JSON format
         """
-
-        # Construct the SQL statement to run on the database
-        sql = f'''
-          SELECT * 
-          FROM kpi1 
-          {sql_condition()}
-          ORDER BY 
-            `interval`,
-            interval_start_timestamp, 
-            interval_end_timestamp, 
-            total_bytes desc,
-            service_id desc
-        '''
-        print("sql", sql)
-
-        # Run the SQL statement on the database and return results
-        return db_results(sql)
+        return db_get(kpi_table="kpi1", order_by="total_bytes desc, service_id desc")
 
 
 @name_space.route('/kpi2/')
@@ -130,20 +136,4 @@ class Kpi2Class(Resource):
         """
         Queries kpi2 database table and returns results in JSON format
         """
-
-        # Construct the SQL statement to run on the database
-        sql = f'''
-          SELECT * 
-          FROM kpi2
-          {sql_condition()}
-          ORDER BY 
-            `interval`,
-            interval_start_timestamp, 
-            interval_end_timestamp, 
-            number_of_unique_users desc,
-            cell_id desc
-        '''
-        print("sql", sql)
-
-        # Run the SQL statement on the database and return results
-        return db_results(sql)
+        return db_get(kpi_table="kpi2", order_by="number_of_unique_users desc, cell_id desc")
