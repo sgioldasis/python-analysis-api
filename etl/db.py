@@ -8,7 +8,6 @@ import config
 
 
 class Db(object):
-
     connection = None
 
     @classmethod

@@ -3,28 +3,28 @@ from etl.db import Db
 
 expected_data_kpi1 = [
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488358800000,
-        'service_id': 1, 'total_bytes': 32200, 'interval': '1-hour'},
+     'service_id': 1, 'total_bytes': 32200, 'interval': '1-hour'},
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488358800000,
-        'service_id': 3, 'total_bytes': 23000, 'interval': '1-hour'},
+     'service_id': 3, 'total_bytes': 23000, 'interval': '1-hour'},
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488358800000,
-        'service_id': 2, 'total_bytes': 18520, 'interval': '1-hour'},
+     'service_id': 2, 'total_bytes': 18520, 'interval': '1-hour'},
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488355500000,
-        'service_id': 1, 'total_bytes': 16100, 'interval': '5-minute'},
+     'service_id': 1, 'total_bytes': 16100, 'interval': '5-minute'},
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488355500000,
-        'service_id': 3, 'total_bytes': 11500, 'interval': '5-minute'},
+     'service_id': 3, 'total_bytes': 11500, 'interval': '5-minute'},
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488355500000,
-        'service_id': 2, 'total_bytes': 9260, 'interval': '5-minute'},
+     'service_id': 2, 'total_bytes': 9260, 'interval': '5-minute'},
     {'interval_start_timestamp': 1488355500000, 'interval_end_timestamp': 1488355800000,
-        'service_id': 1, 'total_bytes': 16100, 'interval': '5-minute'},
+     'service_id': 1, 'total_bytes': 16100, 'interval': '5-minute'},
     {'interval_start_timestamp': 1488355500000, 'interval_end_timestamp': 1488355800000,
-        'service_id': 3, 'total_bytes': 11500, 'interval': '5-minute'},
+     'service_id': 3, 'total_bytes': 11500, 'interval': '5-minute'},
     {'interval_start_timestamp': 1488355500000, 'interval_end_timestamp': 1488355800000,
-        'service_id': 2, 'total_bytes': 9260, 'interval': '5-minute'}
+     'service_id': 2, 'total_bytes': 9260, 'interval': '5-minute'}
 ]
 
 expected_data_kpi2 = [
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488358800000,
-        'cell_id': 1001, 'number_of_unique_users': 4, 'interval': '1-hour'},
+     'cell_id': 1001, 'number_of_unique_users': 4, 'interval': '1-hour'},
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488358800000,
      'cell_id': 5005, 'number_of_unique_users': 3, 'interval': '1-hour'},
     {'interval_start_timestamp': 1488355200000, 'interval_end_timestamp': 1488358800000,
@@ -57,11 +57,9 @@ def same_lists(list1: list, list2: list) -> bool:
 
 
 def test_all():
-
     run_pipeline()
 
     with Db.conn().cursor() as cursor:
-
         # Check raw_data table
         sql = "SELECT count(*) as cnt FROM raw_data"
         cursor.execute(sql)

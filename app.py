@@ -35,6 +35,7 @@ PARAMS = {
     'to': {'description': 'Date to: [format YYYY-MM-DD_HH:MM:SS eg. 2017-03-01_10:00:00]'}
 }
 
+
 def sql_condition():
     """
     Returns the SQL condition corresponding to the request query string
