@@ -112,6 +112,7 @@ def read_csv(folder_path):
                     LOAD DATA LOCAL INFILE '{path}' 
                     INTO TABLE raw_data 
                     FIELDS TERMINATED BY ','
+                    LINES TERMINATED BY '\r\n'
                     IGNORE 1 LINES
                 """
                 cursor.execute(query)
