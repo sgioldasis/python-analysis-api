@@ -91,15 +91,15 @@ def db_results(sql):
             result['interval_end_timestamp'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
         output_rows.append(result)
 
-    # Return json (based on transformed results)
-    # return json.dumps(output_rows)
+    # Return output_rows list
     return output_rows
 
 
 @name_space.route('/kpi1/')
 @name_space.doc(params=PARAMS)
 class Kpi1Class(Resource):
-    def get(self):
+    @staticmethod
+    def get():
         """
         Queries kpi1 database table and returns results in JSON format
         """
@@ -125,7 +125,8 @@ class Kpi1Class(Resource):
 @name_space.route('/kpi2/')
 @name_space.doc(params=PARAMS)
 class Kpi2Class(Resource):
-    def get(self):
+    @staticmethod
+    def get():
         """
         Queries kpi2 database table and returns results in JSON format
         """
