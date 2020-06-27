@@ -30,7 +30,7 @@ def test_kpi1_all():
         }
     ]
 
-    with app.app.test_client() as client:
+    with app.flask_app.test_client() as client:
         response = client.get(endpoint)
         actual_data = json.loads(response.get_data(as_text=True))
         assert response.status_code == 200
@@ -63,7 +63,7 @@ def test_kpi2_all():
         }
     ]
 
-    with app.app.test_client() as client:
+    with app.flask_app.test_client() as client:
         response = client.get(endpoint)
         actual_data = json.loads(response.get_data(as_text=True))
         assert response.status_code == 200
@@ -96,7 +96,7 @@ def test_kpi1_one():
         }
     ]
 
-    with app.app.test_client() as client:
+    with app.flask_app.test_client() as client:
         response = client.get(endpoint)
         actual_data = json.loads(response.get_data(as_text=True))
         assert response.status_code == 200
@@ -130,7 +130,7 @@ def test_kpi2_one():
 
     ]
 
-    with app.app.test_client() as client:
+    with app.flask_app.test_client() as client:
         response = client.get(endpoint)
         actual_data = json.loads(response.get_data(as_text=True))
         assert response.status_code == 200
@@ -205,7 +205,7 @@ def test_kpi1_none():
         }
     ]
 
-    with app.app.test_client() as client:
+    with app.flask_app.test_client() as client:
         response = client.get(endpoint)
         data = response.get_data(as_text=True)
         print("data", data)
@@ -282,7 +282,7 @@ def test_kpi2_none():
         }
     ]
 
-    with app.app.test_client() as client:
+    with app.flask_app.test_client() as client:
         response = client.get(endpoint)
         actual_data = json.loads(response.get_data(as_text=True))
         assert response.status_code == 200

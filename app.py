@@ -2,27 +2,38 @@
 This module provides the API functionality
 """
 
-import json
 import time
 from datetime import datetime
 
 from flask import Flask
 from flask import request
 from flask_mysqldb import MySQL
+from flask_restplus import Api, Resource
 
 import config
 
 # App Configuration
-app = Flask(__name__)
+flask_app = Flask(__name__)
+flask_app.config['MYSQL_USER'] = config.USER
+flask_app.config['MYSQL_PASSWORD'] = config.PASSWORD
+flask_app.config['MYSQL_HOST'] = config.HOST
+flask_app.config['MYSQL_DB'] = config.DATABASE
+flask_app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-app.config['MYSQL_USER'] = config.USER
-app.config['MYSQL_PASSWORD'] = config.PASSWORD
-app.config['MYSQL_HOST'] = config.HOST
-app.config['MYSQL_DB'] = config.DATABASE
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app = Api(app=flask_app,
+          version="1.0",
+          title="Python analysis API",
+          description="Get KPI information based on query parameters")
 
-mysql = MySQL(app)
+name_space = app.namespace('', description='Main APIs')
 
+mysql = MySQL(flask_app)
+
+PARAMS = {
+    'interval': {'description': 'Time interval: [5-minute or 1-hour]'},
+    'from': {'description': 'Date from: [format YYYY-MM-DD_HH:MM:SS eg. 2017-03-01_10:00:00]'},
+    'to': {'description': 'Date to: [format YYYY-MM-DD_HH:MM:SS eg. 2017-03-01_10:00:00]'}
+}
 
 def sql_condition():
     """
@@ -53,7 +64,7 @@ def sql_condition():
         conditions.append(f"(`interval` = '{value}')")
 
     # Construct the final condition (join the conditions in the list with AND)
-    condition = "" if not conditions else " WHERE "+" AND ".join(conditions)
+    condition = "" if not conditions else " WHERE " + " AND ".join(conditions)
     print("condition", condition)
 
     # Return the final condition
@@ -74,58 +85,63 @@ def db_results(sql):
     output_rows = []
     for result in results:
         result['interval_start_timestamp'] = datetime.fromtimestamp(
-            result['interval_start_timestamp']/1000).strftime('%Y-%m-%d %H:%M:%S')
+            result['interval_start_timestamp'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
         result['interval_end_timestamp'] = datetime.fromtimestamp(
-            result['interval_end_timestamp']/1000).strftime('%Y-%m-%d %H:%M:%S')
+            result['interval_end_timestamp'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
         output_rows.append(result)
 
     # Return json (based on transformed results)
-    return json.dumps(output_rows)
+    # return json.dumps(output_rows)
+    return output_rows
 
 
-@app.route('/kpi1/', methods=['GET'])
-def get_kpi1():
-    """
-    Queries kpi1 database table and returns results in JSON format
-    """
+@name_space.route('/kpi1/')
+@name_space.doc(params=PARAMS)
+class Kpi1Class(Resource):
+    def get(self):
+        """
+        Queries kpi1 database table and returns results in JSON format
+        """
 
-    # Construct the SQL statement to run on the database
-    sql = f'''
-      SELECT * 
-      FROM kpi1 
-      {sql_condition()}
-      ORDER BY 
-        `interval`,
-        interval_start_timestamp, 
-        interval_end_timestamp, 
-        total_bytes desc,
-        service_id desc
-    '''
-    print("sql", sql)
+        # Construct the SQL statement to run on the database
+        sql = f'''
+          SELECT * 
+          FROM kpi1 
+          {sql_condition()}
+          ORDER BY 
+            `interval`,
+            interval_start_timestamp, 
+            interval_end_timestamp, 
+            total_bytes desc,
+            service_id desc
+        '''
+        print("sql", sql)
 
-    # Run the SQL statement on the database and return results
-    return db_results(sql)
+        # Run the SQL statement on the database and return results
+        return db_results(sql)
 
 
-@app.route('/kpi2/', methods=['GET'])
-def get_kpi2():
-    """
-    Queries kpi2 database table and returns results in JSON format
-    """
+@name_space.route('/kpi2/')
+@name_space.doc(params=PARAMS)
+class Kpi2Class(Resource):
+    def get(self):
+        """
+        Queries kpi2 database table and returns results in JSON format
+        """
 
-    # Construct the SQL statement to run on the database
-    sql = f'''
-      SELECT * 
-      FROM kpi2
-      {sql_condition()}
-      ORDER BY 
-        `interval`,
-        interval_start_timestamp, 
-        interval_end_timestamp, 
-        number_of_unique_users desc,
-        cell_id desc
-    '''
-    print("sql", sql)
+        # Construct the SQL statement to run on the database
+        sql = f'''
+          SELECT * 
+          FROM kpi2
+          {sql_condition()}
+          ORDER BY 
+            `interval`,
+            interval_start_timestamp, 
+            interval_end_timestamp, 
+            number_of_unique_users desc,
+            cell_id desc
+        '''
+        print("sql", sql)
 
-    # Run the SQL statement on the database and return results
-    return db_results(sql)
+        # Run the SQL statement on the database and return results
+        return db_results(sql)
