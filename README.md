@@ -21,7 +21,7 @@ In the image below you can see the design of the system on a high level:
 
 ## API Design
 
-The API consists of two resources (kpi1, kpi2).
+The API consists of two resources (kpi1, kpi2). You can view the Swagger documentation for the API in your browser at http://127.0.0.1:5000/ 
 
 Each resource corresponds to an endpoint (eg. http://127.0.0.1:5000/kpi1 and http://127.0.0.1:5000/kpi2)
 

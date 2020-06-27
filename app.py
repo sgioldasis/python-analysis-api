@@ -25,7 +25,7 @@ app = Api(app=flask_app,
           title="Python analysis API",
           description="Get KPI information based on query parameters")
 
-name_space = app.namespace('', description='Main APIs')
+name_space = app.namespace('', description='Namespace: /')
 
 mysql = MySQL(flask_app)
 
