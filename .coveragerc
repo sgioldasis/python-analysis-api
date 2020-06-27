@@ -2,3 +2,5 @@
 omit =
     etl/__init__.py
     etl/__main__.py
+    tests/*
+    config.py
