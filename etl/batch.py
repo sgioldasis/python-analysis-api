@@ -105,7 +105,7 @@ def read_csv(folder_path):
 
     """
     with Db.conn().cursor() as cursor:
-        for root, dirs, files in os.walk(folder_path):
+        for _, _, files in os.walk(folder_path):
             for file in files:
                 path = os.path.join(folder_path, file)
                 query = f"""
